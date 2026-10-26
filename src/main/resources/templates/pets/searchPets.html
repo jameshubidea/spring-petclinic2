@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout (~{::body},'pets')}">
+<body>
+
+<h2>Search Pets</h2>
+
+<form th:action="@{/pets/search}" method="get" class="form-horizontal" id="search-pet-form">
+  <div class="form-group">
+    <label for="keyword" class="col-sm-2 control-label">Keyword</label>
+    <div class="col-sm-10">
+      <input id="keyword" name="keyword" class="form-control" type="text"
+             maxlength="80" placeholder="Pet name, pet type, or owner's name"
+             th:value="${keyword}" />
+      <small class="form-text text-muted">
+        Search by pet name, type (for example Dog or Cat), or owner's first/last name.
+      </small>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <button type="submit" class="btn btn-primary">Search</button>
+      <a class="btn btn-secondary" th:href="@{/pets/search}">Clear</a>
+    </div>
+  </div>
+</form>
+
+<div th:if="${searched}">
+  <h3 th:text="|Search results (${#lists.size(pets)})|">Search results</h3>
+  <p th:if="${#lists.isEmpty(pets)}">No pets matched your keyword.</p>
+
+  <table th:if="${not #lists.isEmpty(pets)}" class="table table-striped">
+    <thead>
+    <tr>
+      <th>Pet name</th>
+      <th>Type</th>
+      <th>Birth date</th>
+      <th>Owner</th>
+      <th>Details</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="pet : ${pets}">
+      <td th:text="${pet.petName}">Leo</td>
+      <td th:text="${pet.typeName != null ? pet.typeName : 'Unknown'}">Dog</td>
+      <td th:text="${pet.birthDate != null ? #temporals.format(pet.birthDate, 'yyyy-MM-dd') : 'Unknown'}">2020-01-01</td>
+      <td th:text="|${pet.ownerFirstName} ${pet.ownerLastName}|">George Franklin</td>
+      <td><a th:href="@{/owners/{ownerId}(ownerId=${pet.ownerId})}">View owner</a></td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+</body>
+</html>
